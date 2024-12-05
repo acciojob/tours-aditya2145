@@ -9,7 +9,7 @@ const App = () => {
   const getData = () => {
     setIsLoading(true);
     try {
-      fetch("/src/data/data.json").then(res=>res.json()).then(data=>setTourData(data))
+      fetch("./data.json").then(res=>res.json()).then(data=>setTourData(data))
     } catch (error) {
       console.log("Error to get data", error)
     } finally{
