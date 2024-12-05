@@ -1,35 +1,53 @@
-import React, { useCallback, useEffect, useState } from "react";
-import Loading from "./Loading";
-import Tours from "./Tours";
+import React, { useState, useEffect } from 'react';
+import Loading from './loading';
+import Tours from './tours';
+import TourAPI from './TourAPI';
+import './tour.css';
 
 const App = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [tourData, setTourData] = useState([]);
 
-  const getData = () => {
-    setIsLoading(true);
-    try {
-      fetch("./data.json").then(res=>res.json()).then(data=>setTourData(data))
-    } catch (error) {
-      console.log("Error to get data", error)
-    } finally{
-      setIsLoading(false);
+    const [loading, setLoading] = useState(true);
+    const [tours, setTours] = useState([]);
+
+    const fetchTours = () => {
+        setLoading(true);
+        try {
+            const data = TourAPI(); // Call the function to get the data
+            setTours(data);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching tours:', error);
+            setLoading(false);
+        }
+    };
+
+    const removeTour = (id) => {
+        const newTours = tours.filter((tour) => tour.id !== id);
+        setTours(newTours);
+    };
+
+    useEffect(() => {
+        fetchTours();
+    }, []);
+
+    if (loading) {
+        return <Loading />;
     }
-  }
-  useEffect(() => {
-    getData();
-  }, [])
-  
+
+    if (tours.length === 0) {
+        return (
+            <div className="no-tours">
+                <h2>No tours left</h2>
+                <button className="refresh-btn" onClick={fetchTours}>
+                    Refresh
+                </button>
+            </div>
+        );
+    }
+    
     return(
       <main id="main">
-        <p className="title">Tours</p>
-        {isLoading?<Loading/>:
-        tourData.length>0?<Tours data={tourData} setData={setTourData} />:
-        <div>
-          <p>No tours left</p>
-          <button className="btn" onClick={getData}>Refresh</button>
-        </div>
-        }
+        <Tours tours={tours} removeTour={removeTour} />
       </main>
     )
 }
