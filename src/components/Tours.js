@@ -1,20 +1,19 @@
-import React from "react";
-import Tour from "./Tour";
+import React from 'react'
+import Tour from './Tour'
 
-const Tours = ({ tours, removeTour }) => {
+const Tours = ({data, setData}) => {
+    console.log(data)
+    const onDelete = (id) => {
+        const fData = data.filter(v=>v.id!==id);
+        setData(fData);
+    }
   return (
-    <section>
-      <div className="title">
-        <h2>Our Tours</h2>
-        <div className="underline"></div>
-      </div>
-      <div>
-        {tours.map((tour) => (
-          <Tour key={tour.id} {...tour} removeTour={removeTour} />
+    <div>
+        {data.map((v, i)=>(
+            <Tour key={i} id={v.id} name={v.name} info={v.info} image={v.image} price={v.price} onDelete={()=>onDelete(v.id)} />
         ))}
-      </div>
-    </section>
-  );
-};
+    </div>
+  )
+}
 
-export default Tours;
+export default Tours
